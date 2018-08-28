@@ -1,5 +1,5 @@
 import asyncio
-from models import User, BLog, Comment
+from models import User
 import cororm
 
 async def test(loop):
@@ -7,9 +7,9 @@ async def test(loop):
     user = User(name='testUser', email='test@example.com', password='1345345', image='about:blank')
     await user.save()
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(test(loop))
-loop.run_forever()
+lp = asyncio.get_event_loop()
+lp.run_until_complete(test(lp))
+lp.run_forever()
 
 # test(None)
 

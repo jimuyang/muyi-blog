@@ -5,8 +5,10 @@
 import logging
 import aiomysql
 
+# global __mysql_connection_pool
+
 def log(sql, args=()):
-    logging.info('SQL: %s' % sql)
+    logging.info('SQL: %s', sql)
 
 async def create_pool(loop, **kw):
     logging.info('create database connection pool...')
@@ -34,7 +36,7 @@ async def select(sql, args, size=None):
                 rs = await cur.fetchmany(size)
             else:
                 rs = await cur.fetchall()
-        logging.info('rows returned: %s' % len(rs))
+        logging.info('rows returned: %s', len(rs))
         return rs
 
 
@@ -111,13 +113,13 @@ class ModelMeta(type):
         if name == 'Model':
             return type.__new__(cls, name, bases, attrs)
         table_name = attrs.get('__table__', None) or name
-        logging.info('found model: %s (table: %s)' % (name, table_name))
+        logging.info('found model: %s (table: %s)', name, table_name)
         mappings = dict()
         fields = []
         primary_key = None
         for k, v in attrs.items():
             if isinstance(v, Field):
-                logging.info('  found mapping: %s ==> %s' % (k, v))
+                logging.info('  found mapping: %s ==> %s', k, v)
                 mappings[k] = v
                 if v.primary_key:
                     # 找到主键
@@ -166,7 +168,7 @@ class Model(dict, metaclass=ModelMeta):
             field = self.__mappings__[key]
             if field.default is not None:
                 value = field.default() if callable(field.default) else field.default
-                logging.debug('using default value for %s: %s' % (key, str(value)))
+                logging.debug('using default value for %s: %s', key, str(value))
                 setattr(self, key, value)
         return value
 
@@ -223,17 +225,17 @@ class Model(dict, metaclass=ModelMeta):
         args.append(self.getValueOrDefault(self.__primary_key__))
         rows = await execute(self.__insert__, args)
         if rows != 1:
-            logging.warn('failed to insert record: affected rows: %s' % rows)
+            logging.warning('failed to insert record: affected rows: %s', rows)
 
     async def update(self):
         args = list(map(self.getValue, self.__fields__))
         args.append(self.getValue(self.__primary_key__))
         rows = await execute(self.__update__, args)
         if rows != 1:
-            logging.warn('failed to update by primary key: affected rows: %s' % rows)
+            logging.warning('failed to update by primary key: affected rows: %s', rows)
 
     async def remove(self):
         args = [self.getValue(self.__primary_key__)]
         rows = await execute(self.__delete__, args)
         if rows != 1:
-            logging.warn('failed to remove by primary key: affected rows: %s' % rows)
+            logging.warning('failed to remove by primary key: affected rows: %s', rows)
