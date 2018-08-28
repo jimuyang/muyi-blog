@@ -7,7 +7,7 @@ __author__ = 'Jimu Yang'
 JSON API Error definition.
 '''
 
-import json, logging, inspect, functools
+# import json, logging, inspect, functools
 
 class APIError(Exception):
     '''

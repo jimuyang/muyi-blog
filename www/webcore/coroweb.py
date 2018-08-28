@@ -28,7 +28,7 @@ def post(path):
     '''
     def decorator(func):
         @functools.wraps(func)
-        def wrapper(*args, **kw):
+        def wrapper():
             wrapper.__method__ = 'POST'
             wrapper.__route__ = path
         return wrapper
@@ -122,7 +122,7 @@ class RequestHandler(object):
             # check named arg:
             for k, v in request.match_info.items():
                 if k in kw:
-                    logging.warning('Duplicate arg name in named arg and kw args: %s' % k)
+                    logging.warning('Duplicate arg name in named arg and kw args: %s' , k)
                 kw[k] = v
         if self._has_request_arg:
             kw['request'] = request
@@ -131,7 +131,7 @@ class RequestHandler(object):
             for name in self._required_kw_args:
                 if not name in kw:
                     return web.HTTPBadRequest('Missing argument: %s' % name)
-        logging.info('call with args: %s' % str(kw))
+        logging.info('call with args: %s', str(kw))
         try:
             r = await self._func(**kw)
             return r
@@ -141,7 +141,7 @@ class RequestHandler(object):
 def add_static(app):
     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
     app.router.add_static('/static/', path)
-    logging.info('add static %s => %s' % ('/static/', path))
+    logging.info('add static %s => %s', '/static/', path)
 
 def add_route(app, fn):
     method = getattr(fn, '__method__', None)
@@ -150,7 +150,7 @@ def add_route(app, fn):
         raise ValueError('@get or @post not defined in %s.' % str(fn))
     if not asyncio.iscoroutinefunction(fn) and not inspect.isgeneratorfunction(fn):
         fn = asyncio.coroutine(fn)
-    logging.info('add route %s %s => %s(%s)' % (method, path, fn.__name__, ', '.join(inspect.signature(fn).parameters.keys())))
+    logging.info('add route %s %s => %s(%s)', method, path, fn.__name__, ', '.join(inspect.signature(fn).parameters.keys()))
     app.router.add_route(method, path, RequestHandler(app, fn))
 
 def add_routes(app, module_name):
@@ -169,5 +169,3 @@ def add_routes(app, module_name):
             path = getattr(fn, '__route__', None)
             if method and path:
                 add_route(app, fn)
-
-

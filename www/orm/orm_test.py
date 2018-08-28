@@ -1,8 +1,9 @@
-import orm, asyncio
+import asyncio
 from models import User, BLog, Comment
+import cororm
 
 async def test(loop):
-    await orm.create_pool(loop=loop, user='www-data', password='www-data', database='py_nature_web')
+    await cororm.create_pool(loop=loop, user='www-data', password='www-data', database='py_nature_web')
     user = User(name='testUser', email='test@example.com', password='1345345', image='about:blank')
     await user.save()
 
