@@ -90,18 +90,18 @@ class RequestHandler(object):
         if self._has_var_kw_arg or self._has_named_kw_args or self._required_kw_args:
             if request.method == 'POST':
                 if not request.content_type:
-                    return web.HTTPBadRequest('Missing content-type')
+                    return web.HTTPBadRequest(body='Missing content-type')
                 ct = request.content_type.lower()
                 if ct.startswith('application/json'):
                     params = await request.json()
                     if not isinstance(params, dict):
-                        return web.HTTPBadRequest('JSON body must be object.')
+                        return web.HTTPBadRequest(body='JSON body must be object.')
                     kw = params
                 elif ct.startswith('application/x-www-form-urlencoded') or ct.startswith('multipart/form-data'):
                     params = await request.post()
                     kw = dict(**params) 
                 else:
-                    return web.HTTPBadGateway('Unsupported content-type: %s' % request.content_type)
+                    return web.HTTPBadGateway(body=('Unsupported content-type: %s' % request.content_type))
             
             if request.method == 'GET':
                 qs = request.query_string
@@ -130,7 +130,7 @@ class RequestHandler(object):
         if self._required_kw_args:
             for name in self._required_kw_args:
                 if not name in kw:
-                    return web.HTTPBadRequest('Missing argument: %s' % name)
+                    return web.HTTPBadRequest(body=('Missing argument: %s' % name))
         logging.info('call with args: %s', str(kw))
         try:
             r = await self._func(**kw)

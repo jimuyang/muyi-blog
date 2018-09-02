@@ -30,7 +30,7 @@ from datetime import datetime
 from aiohttp import web
 from jinja2 import Environment, FileSystemLoader
 
-from orm.cororm import create_pool
+from orm.orm_core import create_pool
 from webcore.coroweb import add_routes, add_static
 
 def init_jinja2(app, **kw):
@@ -97,11 +97,11 @@ async def response_factory(app, handler):
                 resp.content_type = 'text/html;charset=utf-8'
                 return resp
         if isinstance(result, int) and result >= 100 and result < 600:
-            return web.Response(result)
+            return web.Response(body=result)
         if isinstance(result, tuple) and len(result) == 2:
             t, m = result
             if isinstance(t, int) and t >= 100 and t < 600:
-                return web.Response(t, str(m))
+                return web.Response(status=t, body=str(m))
         # default:
         resp = web.Response(body=str(result).encode('utf-8'))
         resp.content_type = 'text/plain;charset=utf-8'
