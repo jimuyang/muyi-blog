@@ -26,7 +26,7 @@ async web application
 
 import os, json, time
 from datetime import datetime
-
+import asyncio
 from aiohttp import web
 from jinja2 import Environment, FileSystemLoader
 
@@ -122,7 +122,7 @@ def datetime_filter(t):
     return u'%s年%s月%s日' % (dt.year, dt.month, dt.day)
 
 async def init(loop):
-    await create_pool(loop=loop, host='127.0.0.1', port=3306, user='www', password='www', db='awesome')
+    await create_pool(loop=loop, host='127.0.0.1', port=3306, user='www-data', password='www-data', database='py_nature_web')
     app = web.Application(loop=loop, middlewares=[
         logger_factory, response_factory
     ])
@@ -132,4 +132,8 @@ async def init(loop):
     srv = await loop.create_server(app.make_handler(), '127.0.0.1', 9000)
     logging.info('server started at http://127.0.0.1:9000...')
     return srv
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(init(loop))
+loop.run_forever()
 

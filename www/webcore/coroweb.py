@@ -6,7 +6,7 @@ __author__ = 'Jimu Yang'
 import asyncio, os, inspect, logging, functools
 from urllib import parse
 from aiohttp import web
-from api_error import APIError
+from webcore.api_error import APIError
 
 
 def get(path):
@@ -139,9 +139,14 @@ class RequestHandler(object):
             return dict(error=e.error, data=e.data, message=e.message)
 
 def add_static(app):
-    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
-    app.router.add_static('/static/', path)
-    logging.info('add static %s => %s', '/static/', path)
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'static')
+    if os.path.isdir(path):
+        app.router.add_static('/static/', path)
+        logging.info('add static %s => %s', '/static/', path)
+    else:
+        logging.info('cannot find static resources dir: %s', path)
+
+   
 
 def add_route(app, fn):
     method = getattr(fn, '__method__', None)

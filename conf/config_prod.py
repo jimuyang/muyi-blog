@@ -7,7 +7,7 @@ __author__ = 'Jimu Yang'
 
 configs = {
     'db': {
-        'host': '192.168.0.100'
+        'host': 'localhost',
     }
 }
 
