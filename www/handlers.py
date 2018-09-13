@@ -32,4 +32,12 @@ async def blogs(request):
         '__template__': 'blogs.html',
         'blogs': blogs
     }
+
+
+@get('/api/users')
+async def api_get_users():
+    users = await User.findAll(orderBy='created_at desc')
+    for user in users:
+        user.password = '****'
+    return dict(users=users)
     
