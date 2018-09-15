@@ -12,6 +12,6 @@ configs = {
         'database': 'py_nature_web',
     },
     'session': {
-        'secret': 'session-secret'
+        'secret': 'session_secret'
     } 
 }

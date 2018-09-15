@@ -7,7 +7,8 @@ Configuration
 
 __author__ = 'Jimu Yang'
 
-import config_dev
+from conf import config_dev
+
 
 class Dict(dict):
     '''
@@ -49,7 +50,8 @@ def toDict(d):
 configs = config_dev.configs
 
 try:
-    import config_prod
+    # import conf.config_prod
+    from conf import config_prod
     configs = merge(configs, config_prod.configs)
 except ImportError:
     pass
